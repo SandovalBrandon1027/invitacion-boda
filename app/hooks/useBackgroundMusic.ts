@@ -20,6 +20,33 @@ export function useBackgroundMusic(volume: number) {
     };
   }, []);
 
+  // Pausa la música cuando la página queda oculta (otra app, otra pestaña o
+  // pantalla apagada) y la reanuda al volver, solo si estaba sonando.
+  const resumeOnReturn = useRef(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    const onVisibilityChange = () => {
+      if (!audio) return;
+
+      if (document.hidden) {
+        if (!audio.paused) {
+          resumeOnReturn.current = true;
+          audio.pause();
+          setPlaying(false);
+        }
+      } else if (resumeOnReturn.current) {
+        resumeOnReturn.current = false;
+        audio.play().then(() => setPlaying(true)).catch(() => {});
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, []);
+
   const start = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;

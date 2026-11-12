@@ -75,7 +75,7 @@
 .calHead{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);padding-bottom:6px}
 .calDay{height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-variant-numeric:tabular-nums}
 .calDay.mark{background:var(--ink);color:var(--paper);font-weight:500;box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--gold)}
-.dressIcon{display:block;width:170px;height:auto;margin:18px auto 10px}
+.dressIcon{display:block;width:85px;height:auto;margin:18px auto 10px}
 .dress h3{font-family:var(--font-cormorant),serif;font-size:42px;font-style:italic;font-weight:400;margin:6px 0 4px}
 .dress p{font-size:13px;color:var(--mute);line-height:1.7}
 .photoWrap{position:relative;width:min(78%,300px);margin:22px auto 8px}

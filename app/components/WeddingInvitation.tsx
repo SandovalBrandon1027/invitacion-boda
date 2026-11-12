@@ -97,13 +97,13 @@ export default function WeddingInvitation(): JSX.Element {
           <Contact />
           <Divider />
 
-          <DressCode />
-          <Divider />
-
           <Gallery />
           <Divider />
 
           <ThankYou />
+          <Divider />
+
+          <DressCode />
         </div>
       </main>
     </div>
