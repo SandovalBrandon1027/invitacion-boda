@@ -18,8 +18,9 @@
 .open .seal{opacity:0}
 .mini{border-radius:6px;position:absolute;left:7%;right:7%;top:8%;height:80%;background:var(--paper);z-index:2;transition:transform .9s .5s ease;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .open .mini{transform:translateY(-55%)}
-.hint{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
+.hint{font-size:13px;letter-spacing:.24em;font-weight:400;text-transform:uppercase;color:#6f665b;text-align:center}
 .to{text-align:center}
+.to .label{font-size:14px;letter-spacing:.26em;font-weight:500}
 .card{display:none;max-width:520px;margin:0 auto;padding:40px 20px 60px}
 .card.show{display:block}
 .root{background:radial-gradient(120% 80% at 50% 0%,#f8f3ea 0%,var(--bg) 55%,#e8dfd1 100%)}
@@ -35,6 +36,7 @@
 .parents{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center;margin-top:8px}
 .parents p{font-family:var(--font-cormorant),serif;font-size:19px;line-height:1.4}
 .parents .label{display:block;margin-bottom:8px}
+.bigLabel,.parents .label{font-size:13.5px;letter-spacing:.2em;line-height:1.6;font-weight:500}
 .date{display:flex;justify-content:center;align-items:stretch;margin:6px 0}
 .date div{padding:6px 20px}
 .date div+div{border-left:1px solid #d9cfbf}
@@ -62,18 +64,20 @@
 .gift{margin-top:4px}
 .gift svg{display:block;margin:0 auto}
 .gift .thanks{font-family:var(--font-cormorant),serif;font-style:italic;font-size:30px;line-height:1.35;margin:14px auto 0;max-width:360px;color:var(--mute)}
-.arch{margin:6px auto 0;max-width:300px;padding:56px 18px 40px;border-radius:999px 999px 6px 6px;border:1px solid var(--gold);box-shadow:0 0 0 6px var(--paper),0 0 0 7px rgba(168,137,90,.55);background:radial-gradient(90% 60% at 50% 0%,rgba(168,137,90,.10),transparent 70%)}
+.music{position:fixed;right:16px;bottom:16px;z-index:10;width:42px;height:42px;border-radius:50%;border:1px solid rgba(168,137,90,.6);background:rgba(250,247,242,.92);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px -6px rgba(59,54,49,.4);transition:background .25s,color .25s}
+.music:hover,.music:focus-visible{background:var(--ink);color:var(--paper);outline:2px solid var(--gold);outline-offset:3px}
+.arch{margin:6px auto 0;max-width:320px;padding:6px 18px}
 .cal{max-width:300px;margin:26px auto 0}
 .calTitle{font-family:var(--font-cormorant),serif;font-size:22px;font-style:italic;color:var(--ink);margin-bottom:10px;text-transform:capitalize}
 .calGrid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;font-size:12px;color:var(--mute)}
 .calHead{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);padding-bottom:6px}
 .calDay{height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-variant-numeric:tabular-nums}
 .calDay.mark{background:var(--ink);color:var(--paper);font-weight:500;box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--gold)}
+.dressIcon{display:block;width:170px;height:auto;margin:18px auto 10px}
 .dress h3{font-family:var(--font-cormorant),serif;font-size:42px;font-style:italic;font-weight:400;margin:6px 0 4px}
 .dress p{font-size:13px;color:var(--mute);line-height:1.7}
-.photoWrap{position:relative;width:min(78%,300px);margin:22px auto 36px;animation:float 7s ease-in-out infinite}
-.photoWrap::before{content:"";position:absolute;inset:-12px -12px 12px 12px;border:1px solid var(--gold);border-radius:999px 999px 10px 10px;transform:rotate(3deg);opacity:.7}
-.photo{position:relative;aspect-ratio:3/4;border-radius:999px 999px 10px 10px;overflow:hidden;transform:rotate(-1.5deg);background:linear-gradient(160deg,#efe7d8,#e1d6c3);box-shadow:0 24px 40px -18px rgba(59,54,49,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mute);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.photoWrap{position:relative;width:min(78%,300px);margin:22px auto 8px;animation:float 7s ease-in-out infinite}
+.photo{position:relative;aspect-ratio:3/4;border-radius:999px 999px 10px 10px;overflow:hidden;background:linear-gradient(160deg,#efe7d8,#e1d6c3);box-shadow:0 24px 40px -18px rgba(59,54,49,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mute);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
 .photo img{object-fit:cover}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @media(max-width:420px){.sheet{padding:44px 22px}.date div{padding:6px 13px}.names{font-size:46px}}

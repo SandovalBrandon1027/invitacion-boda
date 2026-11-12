@@ -1,138 +1,33 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
-import type { JSX, ReactNode } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import type { JSX } from "react";
 
 import styles from "../invitation.module.css";
 import { cormorant, montserrat } from "../fonts";
+import { cx } from "../lib/cx";
 import { invitationData as d } from "../data/invitation.data";
+import { useBackgroundMusic } from "../hooks/useBackgroundMusic";
 
-const eventTime = new Date(d.eventDate).getTime();
+import Divider from "./ui/Divider";
+import MusicButton from "./ui/MusicButton";
+import EnvelopeIntro from "./sections/EnvelopeIntro";
+import Blessing from "./sections/Blessing";
+import Parents from "./sections/Parents";
+import Couple from "./sections/Couple";
+import EventDate from "./sections/EventDate";
+import Countdown from "./sections/Countdown";
+import Calendar from "./sections/Calendar";
+import Quote from "./sections/Quote";
+import Place from "./sections/Place";
+import Baptism from "./sections/Baptism";
+import Contact from "./sections/Contact";
+import DressCode from "./sections/DressCode";
+import Gallery from "./sections/Gallery";
+import ThankYou from "./sections/ThankYou";
 
-interface Remaining {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
-}
-
-function getRemaining(): Remaining {
-  const r = Math.max(0, eventTime - Date.now());
-  const pad = (n: number) => String(n).padStart(2, "0");
-
-  return {
-    days: String(Math.floor(r / 86400000)),
-    hours: pad(Math.floor((r % 86400000) / 3600000)),
-    minutes: pad(Math.floor((r % 3600000) / 60000)),
-    seconds: pad(Math.floor((r % 60000) / 1000)),
-  };
-}
-
-const cx = (...c: (string | false)[]) => c.filter(Boolean).join(" ");
-
-function Lines({ items }: { items: string[] }): JSX.Element {
-  return (
-    <>
-      {items.map((n, i) => (
-        <Fragment key={n}>
-          {i > 0 && <br />}
-          {n}
-        </Fragment>
-      ))}
-    </>
-  );
-}
-
-function Reveal({ children }: { children: ReactNode }): JSX.Element {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setSeen(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className={cx(styles.reveal, seen && styles.in)}>
-      {children}
-    </div>
-  );
-}
-
-function Calendar(): JSX.Element {
-  const { year, month, day } = d.calendar;
-  const offset = (new Date(year, month - 1, 1).getDay() + 6) % 7; // lunes primero
-  const total = new Date(year, month, 0).getDate();
-  const heads = ["L", "M", "M", "J", "V", "S", "D"];
-
-  return (
-    <div className={styles.cal}>
-      <div className={styles.calTitle}>
-        {d.date.month} {d.date.year}
-      </div>
-      <div className={styles.calGrid}>
-        {heads.map((h, i) => (
-          <div key={i} className={styles.calHead}>
-            {h}
-          </div>
-        ))}
-        {Array.from({ length: offset }, (_, i) => (
-          <div key={`e${i}`} />
-        ))}
-        {Array.from({ length: total }, (_, i) => (
-          <div
-            key={i}
-            className={cx(styles.calDay, i + 1 === day && styles.mark)}
-          >
-            {i + 1}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Photo(): JSX.Element {
-  const g = d.gallery;
-
-  return (
-    <div className={styles.photoWrap}>
-      <div className={styles.photo}>
-        {g.photo ? (
-          <Image
-            src={g.photo}
-            alt={g.alt}
-            fill
-            sizes="(max-width: 520px) 80vw, 300px"
-          />
-        ) : (
-          <>
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
-              <rect x="3" y="6" width="18" height="14" rx="2" />
-              <circle cx="12" cy="13" r="3.5" />
-              <path d="M8 6l1.5-2h5L16 6" />
-            </svg>
-            <span>{g.placeholder}</span>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
+const MUSIC_SRC = "/EdSheeran-Perfect.mp3";
+const MUSIC_VOLUME = 0.25; // suave (0 a 1)
 
 export default function WeddingInvitation(): JSX.Element {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -140,18 +35,9 @@ export default function WeddingInvitation(): JSX.Element {
   const [opened, setOpened] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [shown, setShown] = useState(false);
-  const [time, setTime] = useState<Remaining | null>(null);
 
-  useEffect(() => {
-    const tick = () => setTime(getRemaining());
-    const first = window.setTimeout(tick, 0);
-    const id = window.setInterval(tick, 1000);
-
-    return () => {
-      window.clearTimeout(first);
-      window.clearInterval(id);
-    };
-  }, []);
+  const { audioRef, playing, start, toggle } =
+    useBackgroundMusic(MUSIC_VOLUME);
 
   useEffect(() => {
     const pending = timers.current;
@@ -161,6 +47,7 @@ export default function WeddingInvitation(): JSX.Element {
   function openEnvelope() {
     if (opened) return;
     setOpened(true);
+    start();
     timers.current.push(
       window.setTimeout(() => setHidden(true), 1900),
       window.setTimeout(() => {
@@ -170,205 +57,53 @@ export default function WeddingInvitation(): JSX.Element {
     );
   }
 
-  const v = (value: string | undefined) => value ?? "--";
-
   return (
     <div
       ref={rootRef}
       className={cx(styles.root, cormorant.variable, montserrat.variable)}
     >
-      <section className={cx(styles.intro, hidden && styles.hide)}>
-        <div className={styles.to}>
-          <div className={styles.label}>{d.intro.label}</div>
-        </div>
+      <audio ref={audioRef} src={MUSIC_SRC} loop preload="none" />
 
-        <div
-          className={styles.scene}
-          tabIndex={0}
-          role="button"
-          aria-label={d.intro.ariaLabel}
-          onClick={openEnvelope}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              openEnvelope();
-            }
-          }}
-        >
-          <div className={cx(styles.envelope, opened && styles.open)}>
-            <div className={styles.mini} />
-            <div className={styles.bottom} />
-            <div className={styles.pocket} />
-            <div className={styles.flap} />
-            <div className={styles.seal}>✉</div>
-          </div>
-        </div>
+      {opened && <MusicButton playing={playing} onToggle={toggle} />}
 
-        <div className={styles.hint}>{d.intro.hint}</div>
-      </section>
+      <EnvelopeIntro opened={opened} hidden={hidden} onOpen={openEnvelope} />
 
       <main className={cx(styles.card, shown && styles.show)}>
         <div className={styles.sheet}>
-          <div className={styles.label}>{d.blessing}</div>
-          <div className={styles.line} />
+          <Blessing />
+          <Divider />
 
-          <div className={styles.parents}>
-            {d.parents.map((p) => (
-              <div key={p.label}>
-                <span className={styles.label}>{p.label}</span>
-                <p>
-                  <Lines items={p.names} />
-                </p>
-              </div>
-            ))}
-          </div>
+          <Parents />
+          <Divider />
 
-          <p className={styles.introT}>{d.honor}</p>
-          <div className={styles.line} />
+          <Couple />
+          <Divider />
 
-          <div className={styles.arch}>
-            <div className={styles.names}>
-              {d.couple.groom}
-              <em>&amp;</em>
-              {d.couple.bride}
-            </div>
-          </div>
-          <div className={styles.line} />
-
-          <div className={styles.date}>
-            <div>
-              <span>{d.date.weekday}</span>
-            </div>
-            <div>
-              <b>{d.date.day}</b>
-              <span>{d.date.month}</span>
-            </div>
-            <div>
-              <span>{d.date.year}</span>
-              <br />
-              <span style={{ color: "var(--ink)" }}>{d.date.time}</span>
-            </div>
-          </div>
-
-          <div
-            className={styles.countdown}
-            role="timer"
-            aria-label="Cuenta regresiva para el evento"
-          >
-            <div><b>{v(time?.days)}</b><span>Días</span></div>
-            <div><b>{v(time?.hours)}</b><span>Horas</span></div>
-            <div><b>{v(time?.minutes)}</b><span>Minutos</span></div>
-            <div><b>{v(time?.seconds)}</b><span>Segundos</span></div>
-          </div>
-
+          <EventDate />
+          <Countdown />
           <Calendar />
 
-          <Reveal>
-            <p className={styles.quote}>{d.quote1}</p>
-          </Reveal>
+          <Quote text={d.quote1} />
 
-          <Reveal>
-          <div className={styles.place}>
-            <div className={styles.label}>{d.ceremony.label}</div>
-            <h3>{d.ceremony.name}</h3>
-            <p>{d.ceremony.detail}</p>
-            <a
-              className={styles.btn}
-              target="_blank"
-              rel="noopener noreferrer"
-              href={d.ceremony.href}
-            >
-              Ver ubicación
-            </a>
-          </div>
-          </Reveal>
-          <div className={styles.line} />
+          <Place {...d.ceremony} />
+          <Divider />
 
-          <Reveal>
-          <div className={cx(styles.place, styles.first)}>
-            <div className={styles.label}>{d.reception.label}</div>
-            <h3>{d.reception.name}</h3>
-            <p>{d.reception.detail}</p>
-            <a
-              className={styles.btn}
-              target="_blank"
-              rel="noopener noreferrer"
-              href={d.reception.href}
-            >
-              Ver ubicación
-            </a>
-          </div>
-          </Reveal>
-          <div className={styles.line} />
+          <Place {...d.reception} first />
+          <Divider />
 
-          <Reveal>
-            <div className={styles.bap}>
-              <div className={styles.label}>{d.baptism.label}</div>
-              <div className={styles.big}>{d.baptism.name}</div>
-              <div className={styles.pad}>
-                <span className={styles.label}>{d.baptism.godparentsLabel}</span>
-                <p>
-                  <Lines items={d.baptism.godparents} />
-                </p>
-              </div>
-            </div>
-          </Reveal>
-          <div className={styles.line} />
+          <Baptism />
+          <Divider />
 
-          <Reveal>
-            <div className={styles.dress}>
-              <div className={styles.label}>{d.dressCode.label}</div>
-              <h3>{d.dressCode.title}</h3>
-              <p>{d.dressCode.text}</p>
-            </div>
-          </Reveal>
-          <div className={styles.line} />
+          <Contact />
+          <Divider />
 
-          <Reveal>
-            <div className={styles.label}>{d.gallery.label}</div>
-            <Photo />
-          </Reveal>
+          <DressCode />
+          <Divider />
 
-          <Reveal>
-            <p className={styles.quote}>{d.quote2}</p>
-          </Reveal>
-          <div className={styles.line} />
+          <Gallery />
+          <Divider />
 
-          <div className={styles.label}>{d.contact.label}</div>
-          <div className={styles.tel}>
-            {d.contact.phones.map((p, i) => (
-              <Fragment key={p.href}>
-                {i > 0 && <>&nbsp; · &nbsp;</>}
-                <a href={p.href}>{p.text}</a>
-              </Fragment>
-            ))}
-          </div>
-          <a
-            className={cx(styles.btn, styles.fill)}
-            target="_blank"
-            rel="noopener noreferrer"
-            href={d.contact.whatsappHref}
-          >
-            {d.contact.whatsappLabel}
-          </a>
-          <div className={styles.line} />
-
-          <div className={styles.gift}>
-            <svg
-              width="64"
-              height="46"
-              viewBox="0 0 64 46"
-              fill="none"
-              aria-hidden="true"
-            >
-              <rect x="2" y="4" width="60" height="40" fill="#e9e1d4" stroke="#a8895a" strokeWidth="1.2" />
-              <polygon points="2,4 32,28 62,4" fill="#d6cab8" stroke="#a8895a" strokeWidth="1.2" strokeLinejoin="round" />
-              <polyline points="2,44 24,24" stroke="#a8895a" strokeWidth="1" />
-              <polyline points="62,44 40,24" stroke="#a8895a" strokeWidth="1" />
-              <circle cx="32" cy="28" r="4.5" fill="#a8895a" />
-            </svg>
-            <p className={styles.thanks}>{d.thanks}</p>
-          </div>
+          <ThankYou />
         </div>
       </main>
     </div>
