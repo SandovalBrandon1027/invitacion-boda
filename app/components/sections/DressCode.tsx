@@ -17,8 +17,6 @@ export default function DressCode(): JSX.Element {
           width={640}
           height={900}
         />
-        <h3>{d.dressCode.title}</h3>
-        <p>{d.dressCode.text}</p>
       </div>
     </Reveal>
   );

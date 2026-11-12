@@ -46,9 +46,7 @@ export const invitationData = {
   },
   calendar: { year: 2026, month: 12, day: 12 },
   dressCode: {
-    label: "Dress code",
-    title: "Formal",
-    text: "Te pedimos asistir con ropa formal.",
+    label: "Dress code"
   },
   gallery: {
     label: "Nuestro momento",

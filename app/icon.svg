@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 3 52 52">
+  <!-- Dos anillos: el beige va completo por encima del dorado -->
+  <circle cx="24" cy="38" r="13" fill="none" stroke="#a8895a" stroke-width="6"/>
+  <circle cx="40" cy="38" r="13" fill="none" stroke="#dccbb0" stroke-width="6"/>
+  <!-- Diamante sobre los anillos -->
+  <path d="M32 3.5 L39.5 12 L32 20.5 L24.5 12 Z" fill="#a8895a"/>
+</svg>

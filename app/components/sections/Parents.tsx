@@ -8,14 +8,25 @@ export default function Parents(): JSX.Element {
   return (
     <>
       <div className={styles.parents}>
-        {d.parents.map((p) => (
-          <div key={p.label}>
-            <span className={styles.label}>{p.label}</span>
-            <p>
-              <Lines items={p.names} />
-            </p>
-          </div>
-        ))}
+        {d.parents.map((p) => {
+          // En teléfono el título se parte antes de la última palabra
+          // ("Padres del / novio", "Padres de la / novia").
+          const cut = p.label.lastIndexOf(" ");
+          const first = p.label.slice(0, cut);
+          const last = p.label.slice(cut + 1);
+
+          return (
+            <div key={p.label}>
+              <span className={styles.label}>
+                {first}
+                <br className={styles.phoneBreak} /> {last}
+              </span>
+              <p>
+                <Lines items={p.names} />
+              </p>
+            </div>
+          );
+        })}
       </div>
 
       <p className={styles.introT}>{d.honor}</p>
