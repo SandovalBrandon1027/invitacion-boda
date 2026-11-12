@@ -44,6 +44,20 @@ export const invitationData = {
     godparentsLabel: "Sus padrinos",
     godparents: ["Ing. Marco Muela", "Sra. Yolanda Guaicha"],
   },
+  calendar: { year: 2026, month: 12, day: 12 },
+  dressCode: {
+    label: "Dress code",
+    title: "Formal",
+    text: "Te pedimos asistir con ropa formal.",
+  },
+  gallery: {
+    label: "Nuestro momento",
+    // Para cargar tu foto: copia la imagen a /public/images y pon aquí su ruta.
+    // Ejemplo: "/images/novios.jpg". Si queda vacío se muestra el recuadro.
+    photo: "/foto-boda.jpeg",
+    alt: "Ricardo y Evelin",
+    placeholder: "Aquí va tu foto",
+  },
   quote2:
     "«Será una alegría compartir contigo este día tan especial para nuestra familia».",
   contact: {

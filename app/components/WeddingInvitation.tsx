@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useEffect, useRef, useState } from "react";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
+import Image from "next/image";
 
 import styles from "../invitation.module.css";
 import { cormorant, montserrat } from "../fonts";
@@ -40,6 +41,96 @@ function Lines({ items }: { items: string[] }): JSX.Element {
         </Fragment>
       ))}
     </>
+  );
+}
+
+function Reveal({ children }: { children: ReactNode }): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+  const [seen, setSeen] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSeen(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={cx(styles.reveal, seen && styles.in)}>
+      {children}
+    </div>
+  );
+}
+
+function Calendar(): JSX.Element {
+  const { year, month, day } = d.calendar;
+  const offset = (new Date(year, month - 1, 1).getDay() + 6) % 7; // lunes primero
+  const total = new Date(year, month, 0).getDate();
+  const heads = ["L", "M", "M", "J", "V", "S", "D"];
+
+  return (
+    <div className={styles.cal}>
+      <div className={styles.calTitle}>
+        {d.date.month} {d.date.year}
+      </div>
+      <div className={styles.calGrid}>
+        {heads.map((h, i) => (
+          <div key={i} className={styles.calHead}>
+            {h}
+          </div>
+        ))}
+        {Array.from({ length: offset }, (_, i) => (
+          <div key={`e${i}`} />
+        ))}
+        {Array.from({ length: total }, (_, i) => (
+          <div
+            key={i}
+            className={cx(styles.calDay, i + 1 === day && styles.mark)}
+          >
+            {i + 1}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Photo(): JSX.Element {
+  const g = d.gallery;
+
+  return (
+    <div className={styles.photoWrap}>
+      <div className={styles.photo}>
+        {g.photo ? (
+          <Image
+            src={g.photo}
+            alt={g.alt}
+            fill
+            sizes="(max-width: 520px) 80vw, 300px"
+          />
+        ) : (
+          <>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="14" rx="2" />
+              <circle cx="12" cy="13" r="3.5" />
+              <path d="M8 6l1.5-2h5L16 6" />
+            </svg>
+            <span>{g.placeholder}</span>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -135,10 +226,12 @@ export default function WeddingInvitation(): JSX.Element {
           <p className={styles.introT}>{d.honor}</p>
           <div className={styles.line} />
 
-          <div className={styles.names}>
-            {d.couple.groom}
-            <em>&amp;</em>
-            {d.couple.bride}
+          <div className={styles.arch}>
+            <div className={styles.names}>
+              {d.couple.groom}
+              <em>&amp;</em>
+              {d.couple.bride}
+            </div>
           </div>
           <div className={styles.line} />
 
@@ -168,8 +261,13 @@ export default function WeddingInvitation(): JSX.Element {
             <div><b>{v(time?.seconds)}</b><span>Segundos</span></div>
           </div>
 
-          <p className={styles.quote}>{d.quote1}</p>
+          <Calendar />
 
+          <Reveal>
+            <p className={styles.quote}>{d.quote1}</p>
+          </Reveal>
+
+          <Reveal>
           <div className={styles.place}>
             <div className={styles.label}>{d.ceremony.label}</div>
             <h3>{d.ceremony.name}</h3>
@@ -183,8 +281,10 @@ export default function WeddingInvitation(): JSX.Element {
               Ver ubicación
             </a>
           </div>
+          </Reveal>
           <div className={styles.line} />
 
+          <Reveal>
           <div className={cx(styles.place, styles.first)}>
             <div className={styles.label}>{d.reception.label}</div>
             <h3>{d.reception.name}</h3>
@@ -198,20 +298,40 @@ export default function WeddingInvitation(): JSX.Element {
               Ver ubicación
             </a>
           </div>
+          </Reveal>
           <div className={styles.line} />
 
-          <div className={styles.bap}>
-            <div className={styles.label}>{d.baptism.label}</div>
-            <div className={styles.big}>{d.baptism.name}</div>
-            <div className={styles.pad}>
-              <span className={styles.label}>{d.baptism.godparentsLabel}</span>
-              <p>
-                <Lines items={d.baptism.godparents} />
-              </p>
+          <Reveal>
+            <div className={styles.bap}>
+              <div className={styles.label}>{d.baptism.label}</div>
+              <div className={styles.big}>{d.baptism.name}</div>
+              <div className={styles.pad}>
+                <span className={styles.label}>{d.baptism.godparentsLabel}</span>
+                <p>
+                  <Lines items={d.baptism.godparents} />
+                </p>
+              </div>
             </div>
-          </div>
+          </Reveal>
+          <div className={styles.line} />
 
-          <p className={styles.quote}>{d.quote2}</p>
+          <Reveal>
+            <div className={styles.dress}>
+              <div className={styles.label}>{d.dressCode.label}</div>
+              <h3>{d.dressCode.title}</h3>
+              <p>{d.dressCode.text}</p>
+            </div>
+          </Reveal>
+          <div className={styles.line} />
+
+          <Reveal>
+            <div className={styles.label}>{d.gallery.label}</div>
+            <Photo />
+          </Reveal>
+
+          <Reveal>
+            <p className={styles.quote}>{d.quote2}</p>
+          </Reveal>
           <div className={styles.line} />
 
           <div className={styles.label}>{d.contact.label}</div>
